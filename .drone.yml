@@ -1,0 +1,30 @@
+---
+kind: pipeline
+type: docker
+name: docker
+
+# https://docs.drone.io/pipeline/environment/reference/
+steps:
+- name: test
+  image: golang:1.13-alpine
+  commands:
+  - go test .
+
+- name: docker-push
+  image: plugins/docker
+  environment:
+    DOCKER_BUILDKIT: 1
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: gmetrixr/k8s-sentry
+    context: .
+    dockerfile: Dockerfile
+    tags:
+    - ${DRONE_COMMIT_SHA:0:8}
+
+trigger:
+  event: [push]
+
