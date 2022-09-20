@@ -27,4 +27,3 @@ steps:
 
 trigger:
   event: [push]
-
